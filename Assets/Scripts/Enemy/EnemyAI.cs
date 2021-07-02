@@ -15,7 +15,7 @@ namespace Enemy
         [SerializeField] private float obstacleRange = 4f;
         [SerializeField] private float xPoint, zPoint;
         private bool isAlive;
-        [SerializeField] bool isMoving;
+        [SerializeField] bool isReached;
         void Start()
         {
             nav = GetComponent<NavMeshAgent>();
@@ -23,55 +23,37 @@ namespace Enemy
             isAlive = true;
             StartCoroutine(MoveToRandomPoint());
         }
-
-        void Update()
+        private void Update()
         {
-            //MovingPermanently();
-        }
-
-        private void MovingPermanently()
-        {
-            if (isAlive)
+            if (!isReached)
             {
-                transform.Translate(0, 0, speed * Time.deltaTime);
-
-                Ray ray = new Ray(transform.position, transform.forward);
-                RaycastHit hit;
-                if (Physics.Raycast(ray, out hit))
-                {
-                    if (hit.distance < obstacleRange)
-                    {
-                        RotateProcess();
-                    }
-                }
+                animator.SetBool("isRunning", true);
+            }
+            if (isReached)
+            {
+                animator.SetBool("isRunning", false);
             }
         }
-
-        private void RotateProcess()
-        {
-            float angle = Random.Range(-110, 100);   // to do smooth rotate
-            transform.Rotate(0, angle, 0);
-        }
+        // генерация случайной точки назначение для navMeshAgent
         IEnumerator MoveToRandomPoint()
         {
-            Debug.Log("Spawn");
             yield return new WaitForSeconds(2f);
-            while(true)
+            while (isAlive)
             {
-                isMoving = false;
-                xPoint = Random.Range(-20, 20);
-                zPoint = Random.Range(-20, 20);
-
-                Vector3 randomPoint = new Vector3(xPoint, 2, zPoint);
-                transform.position = Vector3.MoveTowards(transform.position, randomPoint, speed);
-                nav.SetDestination(transform.position);
-                if(transform.position == randomPoint)
+                if (isReached)
                 {
-                    Debug.Log("stop");
+                    xPoint = Random.Range(-20, 20);
+                    zPoint = Random.Range(-20, 20);
+                    isReached = false;
                 }
-                yield return new WaitForSeconds(2f);
+                Vector3 randomPoint = new Vector3(xPoint, transform.position.y, zPoint);
+                nav.SetDestination(randomPoint);
+                if (nav.transform.position == randomPoint)
+                {
+                    isReached = true;
+                }
+                yield return new WaitForSeconds(1f);
             }
         }
     }
-
 }
