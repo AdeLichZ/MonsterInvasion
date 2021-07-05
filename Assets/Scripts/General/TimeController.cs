@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,16 +11,16 @@ namespace General
 
         [SerializeField] Text timer;
         [SerializeField] Text countdownText;
+        [SerializeField] float timeCheck;
 
         private float startTime;
-        [SerializeField] float elapsedTime;
+        private float elapsedTime;
         [SerializeField] float finishTime;
         public int countdownTime;
 
         TimeSpan timePlaying;
         private bool gamePlaying = false;
 
-        public static event Action Bursted;
         private void Awake()
         {
             instance = this;
@@ -29,7 +28,7 @@ namespace General
         void Start()
         {
             gamePlaying = false;
-
+            Time.timeScale = 1;
             StartCoroutine(CountdownToStart());
         }
         private void BeginGame()
@@ -54,7 +53,8 @@ namespace General
         {
             if(elapsedTime >= finishTime)
             {
-                GameManager.instance.WinCondition();
+                GameManager gameManager = GetComponent<GameManager>();
+                gameManager.WinCondition();
             }
         }
 

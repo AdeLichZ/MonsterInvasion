@@ -17,14 +17,28 @@ namespace General
         [SerializeField] GameObject winMenu;
         [SerializeField] int enemyCap = 0;
         [SerializeField] int enemyCount = 0;
-        void Awake()
+        [SerializeField] AudioSource winSound;
+        [SerializeField] AudioSource loseSound;
+        private void Awake()
         {
-            instance = this;
+            //int numberOfMusic = FindObjectsOfType<GameManager>().Length;
+            //if (numberOfMusic > 1)
+            //{
+            //    Destroy(gameObject);
+            //}
+            //else
+            //{
+            //    DontDestroyOnLoad(gameObject);
+            //}
+        }
+        void Start()
+        {
+
             winMenu.SetActive(false);
             looseMenu.SetActive(false);
             EnemySpawn.Added += CountingEnemy;
-            EnemyHealth.Removed += Score;
-            EnemyHealth.Removed += DisCountingEnemy;
+            EnemyAI.Removed += Score;
+            EnemyAI.Removed += DisCountingEnemy;
         }
 
         void Update()
@@ -39,12 +53,15 @@ namespace General
         {
             if (looseMenu != null)
             {
+                FindObjectOfType<MusicManager>().GetComponent<AudioSource>().Stop();
+                loseSound.Play();
                 looseMenu.SetActive(true);
                 Time.timeScale = 0;
             }
         }
         public void WinCondition()
         {
+            winSound.Play();
             winMenu.SetActive(true);
             Time.timeScale = 0;
         }
@@ -60,7 +77,7 @@ namespace General
         public void CountingEnemy()
         {
             enemyCap++;
-            enemyCaptxt.text = "Enemies left: " + enemyCap.ToString();
+            enemyCaptxt.text = "Enemies: " + enemyCap.ToString() + "/10";
         }
         public void DisCountingEnemy()
         {
@@ -70,6 +87,7 @@ namespace General
         public void RestartLevel()
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            Time.timeScale = 1;
         }
         public void ToMainMenu()
         {

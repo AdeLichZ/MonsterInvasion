@@ -1,9 +1,9 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using General;
+using UnityEngine.UI;
 
 namespace Enemy
 {
@@ -12,10 +12,11 @@ namespace Enemy
         [SerializeField] EnemyAI normalEnemyPrefab;
         [SerializeField] EnemyAI bigEnemyPrefab;
         [SerializeField] EnemyAI smallEnemyPrefab;
+        [SerializeField] Text warningtxt;
 
         [SerializeField] GameObject groundPrefab;
 
-        private int interval = 2;                 // TO DO random interval     
+        public float interval = 3;                 // TO DO random interval     
         [SerializeField] float xLength, zLength;
         float xDistance, zDistance;
 
@@ -28,7 +29,10 @@ namespace Enemy
         }
         void Start()
         {
+            EnemyAI.Upgraded += ChangeConditions;
+            warningtxt.gameObject.SetActive(false);
             StartCoroutine(MonsterSpawnCycle());
+            InvokeRepeating("ChangeConditions", 18f, 15f);
         }
         private IEnumerator MonsterSpawnCycle()
         {
@@ -59,9 +63,28 @@ namespace Enemy
             xDistance = Random.Range(-xLength / 2, xLength / 2);
             zDistance = Random.Range(-zLength / 2, zLength / 2);
 
-            randomPos = new Vector3(xDistance, 1f, zDistance);
+            randomPos = new Vector3(xDistance, 0, zDistance);
             Instantiate(enemyPrefab, randomPos, Quaternion.Euler(0, Random.Range(0, 360), 0));
             Added();
+        }
+        private void ChangeConditions()
+        {
+            StartCoroutine(Warning());
+            interval -= 0.5f;
+        }
+
+        private IEnumerator Warning()
+        {
+            int count = 0;
+            while (count <= 2)
+            {
+                warningtxt.gameObject.SetActive(true);
+                FindObjectOfType<AudioManager>().Play("Warning");
+                yield return new WaitForSeconds(.5f);
+                warningtxt.gameObject.SetActive(false);
+                yield return new WaitForSeconds(.5f);
+                count++;
+            }
         }
     }
 }

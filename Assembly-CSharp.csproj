@@ -56,16 +56,24 @@
     <Analyzer Include="C:\Program Files (x86)\Microsoft Visual Studio Tools for Unity\16.0\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\General\MainMenu.cs" />
+    <Compile Include="Assets\Scripts\UI\MainMenu.cs" />
     <Compile Include="Assets\Scripts\Enemy\EnemyType.cs" />
     <Compile Include="Assets\Scripts\General\GameManager.cs" />
     <Compile Include="Assets\Scripts\General\TimeController.cs" />
     <Compile Include="Assets\Scripts\Enemy\EnemyHealth.cs" />
     <Compile Include="Assets\Scripts\Enemy\EnemySpawn.cs" />
+    <Compile Include="Assets\Scripts\Enemy\WanderingAI.cs" />
     <Compile Include="Assets\Scripts\General\ClickController.cs" />
     <Compile Include="Assets\Scripts\General\SaveScore.cs" />
     <Compile Include="Assets\Scripts\Enemy\EnemyAI.cs" />
-    <Compile Include="Assets\Scripts\Enemy\WanderingAI.cs" />
+    <Compile Include="Assets\Scripts\UI\HealthBar.cs" />
+    <Compile Include="Assets\Scripts\UI\Billboard.cs" />
+    <Compile Include="Assets\Scripts\General\AudioManager.cs" />
+    <Compile Include="Assets\Scripts\General\Sound.cs" />
+    <Compile Include="Assets\Scripts\General\MusicManager.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Materials\license.txt" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
@@ -658,6 +666,9 @@
     </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.2D.Sprite.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.2D.Sprite.Editor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,24 @@
+fileFormatVersion: 2
+guid: cf41546c7812bf44d8a7b4715cd104d9
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Zombie Night
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 6b1a4fc595e1a8348be42a947cf0a885, type: 3}
+  - {fileID: 12800000, guid: bc1f289e41b2e574e8850e6ee3222433, type: 3}
+  - {fileID: 12800000, guid: 4ce12aa0b575fc34798c3c426da6c214, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

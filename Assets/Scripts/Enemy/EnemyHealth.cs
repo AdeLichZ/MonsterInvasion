@@ -8,15 +8,8 @@ namespace Enemy
     public class EnemyHealth : MonoBehaviour
     {
         [SerializeField] int hitPoints = 1;
-        [SerializeField] EnemyType enemyType;
-
-        private bool isAlive;
 
         public static event Action Removed;
-        void Start()
-        {
-            isAlive = true;
-        }
         public void TakeDamage(int damage)
         {
             hitPoints = hitPoints - damage;
@@ -27,7 +20,7 @@ namespace Enemy
         }
         public void Die()
         {
-            isAlive = false;
+            EnemyAI enemyAI = GetComponent<EnemyAI>();
             Destroy(gameObject);
             Removed();
         }

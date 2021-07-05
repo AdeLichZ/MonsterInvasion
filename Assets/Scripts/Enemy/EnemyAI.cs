@@ -1,59 +1,126 @@
+using General;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 using Random = UnityEngine.Random;
 
 namespace Enemy
 {
+
     public class EnemyAI : MonoBehaviour
     {
-        NavMeshAgent nav;
         Animator animator;
-        [SerializeField] private float speed = 5f;
-        [SerializeField] private float obstacleRange = 4f;
-        [SerializeField] private float xPoint, zPoint;
-        private bool isAlive;
-        [SerializeField] bool isReached;
-        void Start()
+        CapsuleCollider collider;
+        public HealthBar healthBar;
+
+        [SerializeField]private int maxHitPoints;
+        private int currentHitPoints;
+        public float speed = 5f;
+        private float obstacleRange = 2f;
+        public bool isAlive;
+        public bool isReady;
+        public float gameTimeCount;
+
+        public static event Action Removed;
+        public static event Action Upgraded;
+        private void Awake()
         {
-            nav = GetComponent<NavMeshAgent>();
+            gameTimeCount = Time.timeSinceLevelLoad;
+            ChangeConditions();
+        }
+        private void Start()
+        {
+            healthBar.SetMaxHealth(maxHitPoints);
+
+            collider = GetComponent<CapsuleCollider>();
             animator = GetComponent<Animator>();
-            isAlive = true;
-            StartCoroutine(MoveToRandomPoint());
+            isReady = true;
+            StartCoroutine(SpawnPosition());
         }
         private void Update()
         {
-            if (!isReached)
+            if (isAlive)
             {
-                animator.SetBool("isRunning", true);
-            }
-            if (isReached)
-            {
-                animator.SetBool("isRunning", false);
+                MovingPermanently();
             }
         }
-        // генерация случайной точки назначение для navMeshAgent
-        IEnumerator MoveToRandomPoint()
+        private void MovingPermanently()
         {
-            yield return new WaitForSeconds(2f);
-            while (isAlive)
+            if (isAlive)
             {
-                if (isReached)
+                animator.SetBool("isRunning", true);
+                transform.Translate(0, 0, speed * Time.deltaTime);
+
+                Ray ray = new Ray(transform.position, transform.forward);
+                RaycastHit hit;
+                if (Physics.SphereCast(ray, 2, out hit))
                 {
-                    xPoint = Random.Range(-20, 20);
-                    zPoint = Random.Range(-20, 20);
-                    isReached = false;
+                    if (hit.distance < obstacleRange)
+                    {
+                        StartCoroutine(IdlePosition());
+                    }
                 }
-                Vector3 randomPoint = new Vector3(xPoint, transform.position.y, zPoint);
-                nav.SetDestination(randomPoint);
-                if (nav.transform.position == randomPoint)
-                {
-                    isReached = true;
-                }
-                yield return new WaitForSeconds(1f);
             }
+        }
+        public void TakeDamage(int damage)
+        {
+            currentHitPoints -= damage;
+            healthBar.SetHealth(currentHitPoints);
+            if (currentHitPoints <= 0)
+            {
+                Die();
+            }
+        }
+        public void Die()
+        {
+            Destroy(collider);
+            collider.enabled = false;
+            isAlive = false;
+            animator.SetBool("isDead", true);
+            Removed();
+            FindObjectOfType<AudioManager>().Play("MonsterDeath");
+            Destroy(gameObject, 2.5f);
+        }
+        private void RotateProcess()
+        {
+            float angle = Random.Range(-130, 130);
+
+            transform.Rotate(0, angle, 0);
+        }
+        IEnumerator IdlePosition()
+        {
+            animator.SetBool("isRunning", false);
+            isAlive = false;
+            yield return new WaitForSeconds(1f);
+            RotateProcess();
+            isAlive = true;
+        }
+        IEnumerator SpawnPosition()
+        {
+            collider.enabled = false;
+            while (isReady)
+            {
+                isAlive = false;
+                yield return new WaitForSeconds(2f);
+                animator.SetBool("isReady", true);
+                collider.enabled = true;
+                isReady = false;
+                isAlive = true;
+            }
+        }
+        public void ChangeConditions()
+        {
+            if (gameTimeCount >= 18f)
+            {
+                speed += 2;
+                maxHitPoints += 2;
+            }
+            if (gameTimeCount >= 33)
+            {
+                speed += 4;
+                maxHitPoints += 4;
+            }
+            currentHitPoints = maxHitPoints;
         }
     }
 }
